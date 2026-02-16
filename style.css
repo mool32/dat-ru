@@ -27,11 +27,15 @@ html {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.5;
     min-height: 100dvh;
+}
+
+h1, h2, .score-value, .timer-display {
+    font-family: 'Unbounded', 'Inter', sans-serif;
 }
 
 a {

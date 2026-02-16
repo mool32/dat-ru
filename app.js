@@ -15,7 +15,8 @@
 
     // Timer
     let timerInterval = null;
-    let timerSeconds = 240; // 4 min
+    let timerSeconds = 180; // 3 min
+    let timerAutoStarted = false;
 
     // --- DOM refs ---
     const $ = (sel) => document.querySelector(sel);
@@ -96,6 +97,8 @@
                 // Focus first input
                 const firstInput = document.querySelector('.word-input[data-index="0"]');
                 if (firstInput) firstInput.focus();
+                // Auto-start timer
+                startTimer();
             }, 300);
 
         } catch (err) {
@@ -236,6 +239,18 @@
         return 1 - similarity;
     }
 
+    /**
+     * Коррекция балла.
+     * Русские эмбеддинги navec дают завышенные косинусные расстояния:
+     * случайные 7 слов → медиана ~87 (вместо ожидаемых ~78).
+     * Применяем нелинейную коррекцию, чтобы средний человек
+     * получал ~75–80 (как в оригинальном DAT).
+     */
+    function adjustScore(rawScore) {
+        if (rawScore < 50) return rawScore;
+        return 50 + (rawScore - 50) * 0.75;
+    }
+
     function calculateDAT(lemmas) {
         // Take first 7 valid unique words
         const words = lemmas.slice(0, 7);
@@ -258,7 +273,8 @@
             }
         }
 
-        const score = (totalDist / pairCount) * 100;
+        const rawScore = (totalDist / pairCount) * 100;
+        const score = adjustScore(rawScore);
         return { score, words, distances };
     }
 
@@ -267,10 +283,10 @@
     // ============================================================
 
     function getScoreLabel(score) {
-        if (score < 65) return 'Ниже среднего. Ты думаешь привычными категориями.';
-        if (score < 78) return 'Средне. Как большинство людей.';
-        if (score < 90) return 'Выше среднего! Неплохое дивергентное мышление.';
-        if (score < 100) return 'Отлично! Ты в верхних 15%.';
+        if (score < 55) return 'Ниже среднего. Ты думаешь привычными категориями.';
+        if (score < 70) return 'Средне. Как большинство людей.';
+        if (score < 80) return 'Выше среднего! Неплохое дивергентное мышление.';
+        if (score < 88) return 'Отлично! Ты в верхних 15%.';
         return 'Исключительно! Такие баллы — редкость.';
     }
 
@@ -281,8 +297,8 @@
         scoreValue.textContent = score.toFixed(1);
         scoreLabel.textContent = getScoreLabel(score);
 
-        // Scale marker (0–120 range mapped to 0–100%)
-        const pct = Math.min(Math.max(score / 120 * 100, 0), 100);
+        // Scale marker (0–100 range mapped to 0–100%)
+        const pct = Math.min(Math.max(score / 100 * 100, 0), 100);
         scaleMarker.style.left = pct + '%';
 
         // Words used
@@ -374,9 +390,10 @@
     // ============================================================
 
     function startTimer() {
-        timerSeconds = 240;
-        timerDisplay.classList.remove('hidden', 'warning', 'danger');
+        timerSeconds = 180;
+        timerDisplay.classList.remove('warning', 'danger');
         timerToggle.classList.add('active');
+        timerToggle.textContent = '⏸';
         updateTimerDisplay();
 
         timerInterval = setInterval(() => {
@@ -401,9 +418,9 @@
             clearInterval(timerInterval);
             timerInterval = null;
         }
-        timerDisplay.classList.add('hidden');
         timerDisplay.classList.remove('warning', 'danger');
         timerToggle.classList.remove('active');
+        timerToggle.textContent = '▶';
     }
 
     function updateTimerDisplay() {
@@ -425,7 +442,7 @@
 
     function shareResult() {
         const score = scoreValue.textContent;
-        const text = `Мой результат теста дивергентного мышления (DAT-RU): ${score} баллов!\n\nСреднее — 78, ChatGPT — ~85, Claude — ~87.\n\nПройди тест: ${window.location.href}`;
+        const text = `Мой результат теста дивергентного мышления (DAT-RU): ${score} баллов!\n\nСреднее — 72, ChatGPT — ~76, Claude — ~78.\n\nПройди тест: ${window.location.href}`;
 
         if (navigator.share) {
             navigator.share({ title: 'DAT-RU — Мой результат', text })
@@ -488,6 +505,8 @@
         stopTimer();
         window.scrollTo(0, 0);
         document.querySelector('.word-input[data-index="0"]').focus();
+        // Restart timer
+        startTimer();
     }
 
     // ============================================================
