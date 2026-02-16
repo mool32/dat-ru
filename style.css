@@ -514,6 +514,12 @@ header h1 {
     color: var(--text-muted);
 }
 
+.words-used-hint {
+    font-size: 0.75rem;
+    color: var(--border);
+    margin-top: 6px;
+}
+
 /* === Actions === */
 .actions-section {
     display: flex;

@@ -252,30 +252,40 @@
     }
 
     function calculateDAT(lemmas) {
-        // Take first 7 valid unique words
-        const words = lemmas.slice(0, 7);
-        if (words.length < 7) return null;
+        // Score uses first 7 words (per original DAT spec)
+        const scoreWords = lemmas.slice(0, 7);
+        if (scoreWords.length < 7) return null;
 
-        const indices = words.map(w => WORD_INDEX.get(w));
-        const vectors = indices.map(i => getVector(i));
+        const scoreIndices = scoreWords.map(w => WORD_INDEX.get(w));
+        const scoreVectors = scoreIndices.map(i => getVector(i));
 
-        // All 21 pairs
+        // 21 pairs for scoring
         let totalDist = 0;
         let pairCount = 0;
-        const distances = []; // for heatmap
-
-        for (let i = 0; i < vectors.length; i++) {
-            for (let j = i + 1; j < vectors.length; j++) {
-                const dist = cosineDistance(vectors[i], vectors[j]);
-                totalDist += dist;
+        for (let i = 0; i < scoreVectors.length; i++) {
+            for (let j = i + 1; j < scoreVectors.length; j++) {
+                totalDist += cosineDistance(scoreVectors[i], scoreVectors[j]);
                 pairCount++;
-                distances.push({ i, j, dist });
             }
         }
 
         const rawScore = (totalDist / pairCount) * 100;
         const score = adjustScore(rawScore);
-        return { score, words, distances };
+
+        // Heatmap uses ALL valid words (not just 7)
+        const allWords = lemmas;
+        const allIndices = allWords.map(w => WORD_INDEX.get(w));
+        const allVectors = allIndices.map(i => getVector(i));
+        const distances = [];
+
+        for (let i = 0; i < allVectors.length; i++) {
+            for (let j = i + 1; j < allVectors.length; j++) {
+                const dist = cosineDistance(allVectors[i], allVectors[j]);
+                distances.push({ i, j, dist });
+            }
+        }
+
+        return { score, words: allWords, scoreWords, distances };
     }
 
     // ============================================================
@@ -291,7 +301,7 @@
     }
 
     function showResults(result) {
-        const { score, words, distances } = result;
+        const { score, words, scoreWords, distances } = result;
 
         // Score
         scoreValue.textContent = score.toFixed(1);
@@ -301,10 +311,10 @@
         const pct = Math.min(Math.max(score / 100 * 100, 0), 100);
         scaleMarker.style.left = pct + '%';
 
-        // Words used
-        wordsUsedEl.textContent = words.join(', ');
+        // Words used for scoring (first 7)
+        wordsUsedEl.textContent = scoreWords.join(', ');
 
-        // Heatmap
+        // Heatmap uses ALL words
         buildHeatmap(words, distances);
 
         // Show screen
