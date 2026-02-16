@@ -39,6 +39,9 @@
     const wordsUsedEl = $('#words-used');
     const shareBtn = $('#share-btn');
     const retryBtn = $('#retry-btn');
+    const infoBtn = $('#info-btn');
+    const infoModal = $('#info-modal');
+    const modalClose = $('#modal-close');
 
     // ============================================================
     // Data Loading
@@ -262,30 +265,21 @@
         // 21 pairs for scoring
         let totalDist = 0;
         let pairCount = 0;
+        const distances = [];
+
         for (let i = 0; i < scoreVectors.length; i++) {
             for (let j = i + 1; j < scoreVectors.length; j++) {
-                totalDist += cosineDistance(scoreVectors[i], scoreVectors[j]);
+                const dist = cosineDistance(scoreVectors[i], scoreVectors[j]);
+                totalDist += dist;
                 pairCount++;
+                distances.push({ i, j, dist });
             }
         }
 
         const rawScore = (totalDist / pairCount) * 100;
         const score = adjustScore(rawScore);
 
-        // Heatmap uses ALL valid words (not just 7)
-        const allWords = lemmas;
-        const allIndices = allWords.map(w => WORD_INDEX.get(w));
-        const allVectors = allIndices.map(i => getVector(i));
-        const distances = [];
-
-        for (let i = 0; i < allVectors.length; i++) {
-            for (let j = i + 1; j < allVectors.length; j++) {
-                const dist = cosineDistance(allVectors[i], allVectors[j]);
-                distances.push({ i, j, dist });
-            }
-        }
-
-        return { score, words: allWords, scoreWords, distances };
+        return { score, words: scoreWords, distances };
     }
 
     // ============================================================
@@ -301,7 +295,7 @@
     }
 
     function showResults(result) {
-        const { score, words, scoreWords, distances } = result;
+        const { score, words, distances } = result;
 
         // Score
         scoreValue.textContent = score.toFixed(1);
@@ -311,10 +305,10 @@
         const pct = Math.min(Math.max(score / 100 * 100, 0), 100);
         scaleMarker.style.left = pct + '%';
 
-        // Words used for scoring (first 7)
-        wordsUsedEl.textContent = scoreWords.join(', ');
+        // Words used for scoring
+        wordsUsedEl.textContent = words.join(', ');
 
-        // Heatmap uses ALL words
+        // Heatmap for the 7 scoring words
         buildHeatmap(words, distances);
 
         // Show screen
@@ -563,6 +557,19 @@
 
         // Retry
         retryBtn.addEventListener('click', resetForm);
+
+        // Info modal
+        infoBtn.addEventListener('click', () => {
+            infoModal.classList.remove('hidden');
+        });
+        modalClose.addEventListener('click', () => {
+            infoModal.classList.add('hidden');
+        });
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) {
+                infoModal.classList.add('hidden');
+            }
+        });
 
         // Load data
         loadData();

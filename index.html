@@ -166,20 +166,51 @@
             </div>
 
             <div class="heatmap-section">
-                <h2>Расстояния между твоими словами</h2>
-                <p class="heatmap-hint">Чем темнее — тем ближе слова по смыслу</p>
+                <h2>Расстояния между словами</h2>
                 <div class="heatmap-container" id="heatmap-container"></div>
             </div>
 
             <div class="words-used-section">
-                <h2>7 слов для подсчёта балла</h2>
+                <h2>Слова для подсчёта</h2>
                 <p class="words-used" id="words-used"></p>
-                <p class="words-used-hint">Балл считается по первым 7 валидным словам (21 пара). Тепловая карта показывает все введённые слова.</p>
             </div>
 
             <div class="actions-section">
                 <button id="share-btn" class="btn-primary">Поделиться результатом</button>
                 <button id="retry-btn" class="btn-secondary">Попробовать ещё раз</button>
+                <button id="info-btn" class="btn-info" title="Как это работает?">?</button>
+            </div>
+
+            <!-- Info Modal -->
+            <div id="info-modal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <button id="modal-close" class="modal-close">&times;</button>
+                    <h2>Как это работает?</h2>
+                    <div class="info-item">
+                        <h3>Что такое DAT?</h3>
+                        <p>Divergent Association Task — тест дивергентного мышления, разработанный учёными из Гарварда и Макгилла (Olson et al., 2021). Чем дальше по смыслу слова, которые ты придумал, тем выше балл.</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Почему 7 слов?</h3>
+                        <p>Тест просит 10 слов, но оценивает только первые 7 валидных — остальные 3 служат буфером на случай невалидных. Это стандарт оригинального теста для сопоставимости результатов.</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Как считается балл?</h3>
+                        <p>Из 7 слов составляются 21 пара. Для каждой пары вычисляется косинусное расстояние между векторами слов. Балл = среднее расстояние × 100.</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Что такое расстояние?</h3>
+                        <p>Каждое слово — точка в 300-мерном пространстве (эмбеддинг). Близкие по смыслу слова находятся рядом, далёкие — далеко. Расстояние 0 = идентичны, 200 = максимально далеки.</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Тепловая карта</h3>
+                        <p>Показывает расстояние между каждой парой из 7 слов. Тёмные ячейки — слова близки по смыслу, светлые — далеки.</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Точность</h3>
+                        <p>Эмбеддинги взяты из модели navec (проект Natasha), обученной на русской литературе. Баллы приблизительные и не сопоставимы напрямую с английской версией DAT.</p>
+                    </div>
+                </div>
             </div>
 
             <footer class="disclaimer">
