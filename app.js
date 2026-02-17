@@ -44,9 +44,6 @@
     const heatmapContainer = $('#heatmap-container');
     const shareBtn = $('#share-btn');
     const retryBtn = $('#retry-btn');
-    const infoBtn = $('#info-btn');
-    const infoModal = $('#info-modal');
-    const modalClose = $('#modal-close');
 
     // ============================================================
     // Data Loading
@@ -622,18 +619,6 @@
         // Retry
         retryBtn.addEventListener('click', resetForm);
 
-        // Info modal
-        infoBtn.addEventListener('click', () => {
-            infoModal.classList.remove('hidden');
-        });
-        modalClose.addEventListener('click', () => {
-            infoModal.classList.add('hidden');
-        });
-        infoModal.addEventListener('click', (e) => {
-            if (e.target === infoModal) {
-                infoModal.classList.add('hidden');
-            }
-        });
 
         // Load data
         loadData();
