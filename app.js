@@ -16,7 +16,7 @@
     // Timer
     let timerInterval = null;
     let timerSeconds = 180; // 3 min
-    let timerAutoStarted = false;
+    let timerPaused = false;
 
     // --- DOM refs ---
     const $ = (sel) => document.querySelector(sel);
@@ -36,7 +36,6 @@
     const scoreLabel = $('#score-label');
     const scaleMarker = $('#scale-marker');
     const heatmapContainer = $('#heatmap-container');
-    const wordsUsedEl = $('#words-used');
     const shareBtn = $('#share-btn');
     const retryBtn = $('#retry-btn');
     const infoBtn = $('#info-btn');
@@ -305,9 +304,6 @@
         const pct = Math.min(Math.max(score / 100 * 100, 0), 100);
         scaleMarker.style.left = pct + '%';
 
-        // Words used for scoring
-        wordsUsedEl.textContent = words.join(', ');
-
         // Heatmap for the 7 scoring words
         buildHeatmap(words, distances);
 
@@ -395,9 +391,16 @@
 
     function startTimer() {
         timerSeconds = 180;
+        timerPaused = false;
+        resumeTimer();
+    }
+
+    function resumeTimer() {
+        timerPaused = false;
         timerDisplay.classList.remove('warning', 'danger');
         timerToggle.classList.add('active');
         timerToggle.textContent = '⏸';
+        setInputsDisabled(false);
         updateTimerDisplay();
 
         timerInterval = setInterval(() => {
@@ -417,14 +420,34 @@
         }, 1000);
     }
 
+    function pauseTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        timerPaused = true;
+        timerToggle.classList.remove('active');
+        timerToggle.textContent = '▶';
+        setInputsDisabled(true);
+    }
+
     function stopTimer() {
         if (timerInterval) {
             clearInterval(timerInterval);
             timerInterval = null;
         }
+        timerPaused = false;
         timerDisplay.classList.remove('warning', 'danger');
         timerToggle.classList.remove('active');
         timerToggle.textContent = '▶';
+        setInputsDisabled(false);
+    }
+
+    function setInputsDisabled(disabled) {
+        $$('.word-input').forEach(input => {
+            input.disabled = disabled;
+        });
+        submitBtn.disabled = disabled || getValidWords().length < 7;
     }
 
     function updateTimerDisplay() {
@@ -543,10 +566,12 @@
         // Form submit
         wordForm.addEventListener('submit', handleSubmit);
 
-        // Timer
+        // Timer toggle: pause/resume (not restart)
         timerToggle.addEventListener('click', () => {
             if (timerInterval) {
-                stopTimer();
+                pauseTimer();
+            } else if (timerPaused) {
+                resumeTimer();
             } else {
                 startTimer();
             }

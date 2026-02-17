@@ -258,6 +258,16 @@ header h1 {
     color: var(--border);
 }
 
+.word-input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.word-input-wrapper:has(.word-input:disabled) {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .validation-icon {
     font-size: 1.1rem;
     min-width: 20px;

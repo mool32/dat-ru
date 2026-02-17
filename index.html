@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAT-RU — Тест дивергентного мышления</title>
-    <meta name="description" content="Насколько нестандартно ты думаешь? Введи 10 существительных, максимально далёких друг от друга по смыслу, и узнай свой балл.">
-    <meta property="og:title" content="DAT-RU — Тест дивергентного мышления">
-    <meta property="og:description" content="Насколько нестандартно ты думаешь? Пройди тест за 2 минуты.">
+    <title>DAT-RU — Тест на вербальную креативность</title>
+    <meta name="description" content="Тест на вербальную креативность. Напиши 10 существительных, максимально далёких и не связанных друг с другом по смыслу, и узнай свой балл.">
+    <meta property="og:title" content="DAT-RU — Тест на вербальную креативность">
+    <meta property="og:description" content="Тест на вербальную креативность. Пройди тест за 3 минуты.">
     <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,8 +30,8 @@
     <div id="input-screen" class="screen hidden">
         <div class="container">
             <header>
-                <h1>Насколько нестандартно ты думаешь?</h1>
-                <p class="subtitle">Напиши 10 существительных, максимально далёких друг от друга по смыслу</p>
+                <h1>Тест на вербальную креативность</h1>
+                <p class="subtitle">Напиши 10 существительных, максимально далёких и не связанных друг с другом по смыслу</p>
                 <div class="rules">
                     <span>Только существительные</span>
                     <span>Только нарицательные</span>
@@ -123,10 +123,6 @@
     <!-- Экран результатов -->
     <div id="result-screen" class="screen hidden">
         <div class="container">
-            <header>
-                <h1>Твой результат</h1>
-            </header>
-
             <div class="score-section">
                 <div class="score-display">
                     <span class="score-value" id="score-value">0</span>
@@ -148,7 +144,6 @@
             </div>
 
             <div class="comparison-section">
-                <h2>Для сравнения</h2>
                 <div class="comparison-items">
                     <div class="comparison-item">
                         <span class="comp-label">Средний человек</span>
@@ -166,13 +161,7 @@
             </div>
 
             <div class="heatmap-section">
-                <h2>Расстояния между словами</h2>
                 <div class="heatmap-container" id="heatmap-container"></div>
-            </div>
-
-            <div class="words-used-section">
-                <h2>Слова для подсчёта</h2>
-                <p class="words-used" id="words-used"></p>
             </div>
 
             <div class="actions-section">
