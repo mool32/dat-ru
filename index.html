@@ -146,19 +146,19 @@
                 <div class="comparison-items">
                     <div class="comparison-item">
                         <span class="comp-label">Средний человек</span>
-                        <span class="comp-score">~73</span>
+                        <span class="comp-score">~70</span>
                     </div>
                     <div class="comparison-item">
                         <span class="comp-label">ChatGPT-4</span>
-                        <span class="comp-score">~77</span>
+                        <span class="comp-score">~76</span>
                     </div>
                     <div class="comparison-item">
                         <span class="comp-label">Claude 3.5 Haiku</span>
-                        <span class="comp-score">~86</span>
+                        <span class="comp-score">~82</span>
                     </div>
                     <div class="comparison-item">
                         <span class="comp-label">GPT-5</span>
-                        <span class="comp-score">~89</span>
+                        <span class="comp-score">~83</span>
                     </div>
                 </div>
             </div>
@@ -212,7 +212,7 @@
                 </div>
                 <div class="info-item">
                     <h3>Калибровка</h3>
-                    <p>Русские эмбеддинги дают сжатое распределение: случайные 7 слов — медиана ~87 (87% от макс. 100), а запас на «очень далёкие» слова — всего 13%. Применяется кусочно-линейная коррекция, калиброванная по 5000 случайным наборам, чтобы медиана = 78 (как в <a href="https://www.datcreativity.com" target="_blank" rel="noopener">английском DAT</a>), а связанные слова корректно давали низкие баллы.</p>
+                    <p>Русские эмбеддинги дают сжатое распределение: случайные 7 слов — медиана ~87 (87% от макс. 100), а запас на «очень далёкие» слова — всего 13%. Применяется степенная коррекция (a·x<sup>p</sup>+b), калиброванная по 5000 случайным наборам, чтобы медиана = 78 (как в <a href="https://www.datcreativity.com" target="_blank" rel="noopener">английском DAT</a>), а связанные слова корректно давали низкие баллы.</p>
                 </div>
                 <div class="info-item">
                     <h3>Примеры расстояний</h3>
