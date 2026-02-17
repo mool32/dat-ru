@@ -544,6 +544,51 @@ header h1 {
     line-height: 1.6;
 }
 
+.info-item p a {
+    color: var(--accent-light);
+}
+
+/* Examples table */
+.examples-table {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.example-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+}
+
+.example-pair {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.example-dist {
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.example-row.close .example-dist {
+    color: #6c3d91;
+}
+
+.example-row.medium .example-dist {
+    color: #2d8a6e;
+}
+
+.example-row.far .example-dist {
+    color: var(--green);
+}
+
 /* === Disclaimer === */
 .disclaimer {
     text-align: center;
