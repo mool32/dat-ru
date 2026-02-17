@@ -511,7 +511,7 @@
 
     function shareResult() {
         const score = scoreValue.textContent;
-        const text = `Мой результат теста на вербальную креативность (DAT-RU): ${score} баллов!\n\nСреднее — ~78. Большинство людей набирают от 70 до 85.\n\nПройди тест: ${window.location.href}`;
+        const text = `Мой результат теста на вербальную креативность (DAT-RU): ${score} баллов!\n\nСреднее — ~78. Большинство людей набирают от 68 до 83.\n\nПройди тест: ${window.location.href}`;
 
         if (navigator.share) {
             navigator.share({ title: 'DAT-RU — Мой результат', text })
