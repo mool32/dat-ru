@@ -246,14 +246,24 @@
 
     /**
      * Коррекция балла.
-     * Русские эмбеддинги navec дают завышенные косинусные расстояния:
-     * случайные 7 слов → медиана ~87 (вместо ожидаемых ~78).
-     * Применяем нелинейную коррекцию, чтобы средний человек
-     * получал ~75–80 (как в оригинальном DAT).
+     * Русские эмбеддинги navec дают сжатое распределение расстояний:
+     * случайные 7 слов → медиана ~87 (87% от макс. 100),
+     * а связанные слова → 52–78 (широкий разброс вниз).
+     *
+     * Используем кусочно-линейную формулу, калиброванную по 5000 рандомных
+     * наборов + тестовые группы связанных слов, чтобы:
+     *   - медиана случайных = 78 (как в англ. DAT)
+     *   - связанные слова давали 50–70 (а не 71+)
+     *   - очень далёкие слова давали 85–95+
      */
     function adjustScore(rawScore) {
-        if (rawScore < 50) return rawScore;
-        return 50 + (rawScore - 50) * 0.75;
+        // rawScore = average cosine distance * 100
+        const BREAKPOINT = 86.8733;
+        if (rawScore <= BREAKPOINT) {
+            return 69.2081 * (rawScore / 100) + 17.8767;
+        } else {
+            return 256.3840 * (rawScore / 100) + (-144.7292);
+        }
     }
 
     function calculateDAT(lemmas) {
@@ -289,10 +299,11 @@
     // ============================================================
 
     function getScoreLabel(score) {
-        if (score < 55) return 'Ниже среднего. Ты думаешь привычными категориями.';
-        if (score < 70) return 'Средне. Как большинство людей.';
-        if (score < 80) return 'Выше среднего! Неплохое дивергентное мышление.';
-        if (score < 88) return 'Отлично! Ты в верхних 15%.';
+        if (score < 60) return 'Низкий балл. Слова слишком связаны между собой.';
+        if (score < 70) return 'Ниже среднего. Есть куда расти.';
+        if (score < 78) return 'Чуть ниже среднего. Неплохо!';
+        if (score < 85) return 'Выше среднего! Хорошее дивергентное мышление.';
+        if (score < 95) return 'Отлично! Высокая вербальная креативность.';
         return 'Исключительно! Такие баллы — редкость.';
     }
 
@@ -303,8 +314,8 @@
         scoreValue.textContent = score.toFixed(1);
         scoreLabel.textContent = getScoreLabel(score);
 
-        // Scale marker (0–100 range mapped to 0–100%)
-        const pct = Math.min(Math.max(score / 100 * 100, 0), 100);
+        // Scale marker (0–110 range mapped to 0–100%)
+        const pct = Math.min(Math.max(score / 110 * 100, 0), 100);
         scaleMarker.style.left = pct + '%';
 
         // Heatmap for the 7 scoring words
@@ -505,7 +516,7 @@
 
     function shareResult() {
         const score = scoreValue.textContent;
-        const text = `Мой результат теста дивергентного мышления (DAT-RU): ${score} баллов!\n\nСреднее — 72, ChatGPT — ~76, Claude — ~78.\n\nПройди тест: ${window.location.href}`;
+        const text = `Мой результат теста на вербальную креативность (DAT-RU): ${score} баллов!\n\nСреднее — ~78. Большинство людей набирают от 70 до 85.\n\nПройди тест: ${window.location.href}`;
 
         if (navigator.share) {
             navigator.share({ title: 'DAT-RU — Мой результат', text })
