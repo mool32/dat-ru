@@ -5,8 +5,13 @@
 (function () {
     'use strict';
 
-    // --- State ---
+    // --- Config ---
     const DIM = 300;
+    // Google Apps Script endpoint for data collection
+    // Замени на свой URL после создания Apps Script
+    const COLLECT_URL = 'https://script.google.com/macros/s/AKfycbwUxyjCHgNBInDBiFFFxrmplH1iZvdNOleRTIL85x_hLndAt959bMHw_aNsds9rPkf6MA/exec';
+
+    // --- State ---
     let WORDS = [];           // string[] — sorted lemmas
     let WORD_SET = null;      // Set<string> — for fast lookup
     let FORMS = {};           // { form: lemma }
@@ -16,6 +21,7 @@
     // Timer
     let timerInterval = null;
     let timerSeconds = 180; // 3 min
+    let timerStartedAt = null; // timestamp when timer started
     let timerPaused = false;
 
     // --- DOM refs ---
@@ -307,6 +313,9 @@
         // Heatmap for the 7 scoring words
         buildHeatmap(words, distances);
 
+        // Collect data (silent, non-blocking)
+        collectResult(score, words);
+
         // Show screen
         inputScreen.classList.add('hidden');
         resultScreen.classList.remove('hidden');
@@ -392,6 +401,7 @@
     function startTimer() {
         timerSeconds = 180;
         timerPaused = false;
+        timerStartedAt = Date.now();
         resumeTimer();
     }
 
@@ -461,6 +471,35 @@
         } else if (timerSeconds <= 60) {
             timerDisplay.classList.add('warning');
         }
+    }
+
+    // ============================================================
+    // Data Collection
+    // ============================================================
+
+    function collectResult(score, words) {
+        if (!COLLECT_URL) return; // не настроен — пропускаем
+
+        const timeSpent = timerStartedAt
+            ? Math.round((Date.now() - timerStartedAt) / 1000)
+            : null;
+
+        const payload = {
+            score: score,
+            words: words,
+            timeSpent: timeSpent,
+            userAgent: navigator.userAgent
+        };
+
+        // Тихая отправка — не мешает пользователю
+        fetch(COLLECT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).catch(() => {
+            // Ошибка — молча игнорируем
+        });
     }
 
     // ============================================================
